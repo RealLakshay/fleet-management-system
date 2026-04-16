@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+
+  <header class="shell hero">
+    <div class="hero-title-row">
+      <h1>Fleet Console</h1>
+      <span id="heroClock" class="hero-tag">--:--:--</span>
+    </div>
+    <p>Manage vehicles, drivers, assignments and trips from one place.</p>
+    <div class="hero-actions">
+      <button id="refreshDashboard" class="btn btn-primary">Refresh Dashboard</button>
+      <button id="clearLog" class="btn btn-ghost">Clear Log</button>
+    </div>
+  </header>
+
+  <main class="shell grid">
+    <section class="panel panel-wide dashboard">
+      <div class="panel-head">
+        <h2>System Dashboard</h2>
+        <span id="healthBadge" class="badge">Checking...</span>
+      </div>
+      <div class="dashboard-grid">
+        <article class="metric metric-vehicles">
+          <span>Total Vehicles</span>
+          <strong id="totalVehicles">0</strong>
+          <small>Units: fleet</small>
+        </article>
+        <article class="metric metric-trips">
+          <span>Total Trips</span>
+          <strong id="totalTrips">0</strong>
+          <small>Trend: ↗ active</small>
+        </article>
+        <article class="metric metric-open">
+          <span>Open Trips</span>
+          <strong id="openTrips">0</strong>
+          <small>Live: in progress</small>
+        </article>
+        <article class="metric metric-drivers">
+          <span>Known Drivers</span>
+          <strong id="knownDrivers">0</strong>
+          <small>Cache: local</small>
+        </article>
+      </div>
+      <small id="lastUpdated" class="muted">Last updated: --</small>
+    </section>
+
+    <section class="panel section-driver">
+      <h2>👤 Create Driver</h2>
+      <form id="driverForm" class="stack">
+        <div class="field-row field-row-2">
+          <label class="field">
+            <span>First name</span>
+            <input name="firstName" placeholder="First name" required />
+          </label>
+          <label class="field">
+            <span>Last name</span>
+            <input name="lastName" placeholder="Last name" required />
+          </label>
+        </div>
+        <label class="field">
+          <span>License number</span>
+          <input name="licenseNumber" placeholder="License number" required />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input name="email" placeholder="Email" required />
+        </label>
+        <button class="btn btn-submit-driver" type="submit">Add Driver</button>
+      </form>
+      <p id="driverFormError" class="form-error" aria-live="polite"></p>
+    </section>
+
+    <section class="panel section-vehicle">
+      <h2>🚚 Create Vehicle</h2>
+      <form id="vehicleForm" class="stack">
+        <label class="field">
+          <span>Registration number</span>
+          <input name="registrationNumber" placeholder="Registration number" required />
+        </label>
+        <label class="field">
+          <span>Vehicle type</span>
+          <input name="vehicleType" placeholder="Type (TRUCK, VAN...)" required />
+        </label>
+        <div class="field-row field-row-3">
+          <label class="field">
+            <span>Manufacturer</span>
+            <input name="manufacturer" placeholder="Manufacturer" />
+          </label>
+          <label class="field">
+            <span>Model</span>
+            <input name="model" placeholder="Model" />
+          </label>
+          <label class="field">
+            <span>Year</span>
+            <input name="year" type="number" min="1980" max="2100" placeholder="Year" />
+          </label>
+        </div>
+        <button class="btn btn-submit-vehicle" type="submit">Add Vehicle</button>
+      </form>
+      <p id="vehicleFormError" class="form-error" aria-live="polite"></p>
+    </section>
+
+    <section class="panel section-assignment">
+      <h2>🧩 Create Assignment</h2>
+      <form id="assignmentForm" class="stack">
+        <div class="inline-group">
+          <label class="field">
+            <span>Vehicle ID</span>
+            <select id="assignmentVehicleSelect" name="vehicleId" required></select>
+          </label>
+          <button id="refreshVehicleOptions" class="btn btn-ghost" type="button">Sync Vehicles</button>
+        </div>
+        <div class="inline-group">
+          <label class="field">
+            <span>Driver ID</span>
+            <select id="assignmentDriverSelect" name="driverId" required></select>
+          </label>
+          <button id="refreshDriverOptions" class="btn btn-ghost" type="button">Sync Drivers</button>
+        </div>
+        <label class="field">
+          <span>Notes</span>
+          <textarea name="notes" placeholder="Notes"></textarea>
+        </label>
+        <button class="btn btn-submit-assignment" type="submit">Assign Driver</button>
+      </form>
+      <p id="assignmentFormError" class="form-error" aria-live="polite"></p>
+    </section>
+
+    <section class="panel section-trip">
+      <h2>🗺️ Create Trip</h2>
+      <form id="tripForm" class="stack">
+        <label class="field">
+          <span>Vehicle ID</span>
+          <select id="tripVehicleSelect" name="vehicleId" required></select>
+        </label>
+        <label class="field">
+          <span>Driver ID</span>
+          <select id="tripDriverSelect" name="driverId" required></select>
+        </label>
+        <label class="field">
+          <span>Purpose</span>
+          <input name="purpose" placeholder="Purpose" required />
+        </label>
+        <label class="field">
+          <span>Start location</span>
+          <input name="startLocation" placeholder="Start location" required />
+        </label>
+        <label class="field">
+          <span>Start odometer</span>
+          <input name="startOdometer" type="number" min="0" placeholder="Start odometer" required />
+        </label>
+        <button class="btn btn-submit-trip" type="submit">Start Trip</button>
+      </form>
+      <p id="tripFormError" class="form-error" aria-live="polite"></p>
+    </section>
+
+    <section class="panel panel-wide">
+      <div class="panel-head">
+        <h2>Vehicles</h2>
+        <button id="loadVehicles" class="btn btn-ghost">Load</button>
+      </div>
+      <p class="muted">Delete actions are available on each vehicle card.</p>
+      <div id="vehiclesList" class="list"></div>
+    </section>
+
+    <section class="panel panel-wide">
+      <div class="panel-head">
+        <h2>Trips</h2>
+        <button id="loadTrips" class="btn btn-ghost">Load</button>
+      </div>
+      <p class="muted">Use Complete Trip or Delete actions on each trip card.</p>
+      <div id="tripsList" class="list"></div>
+    </section>
+
+    <section class="panel panel-wide">
+      <div class="panel-head">
+        <h2>Known Drivers (Dropdown Source)</h2>
+      </div>
+      <div id="driversList" class="list"></div>
+    </section>
+
+    <section class="panel panel-wide">
+      <h2>Activity Log</h2>
+      <div id="activityLog" class="log" role="log" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

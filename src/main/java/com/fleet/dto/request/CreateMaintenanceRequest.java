@@ -1,0 +1,18 @@
+package com.fleet.dto.request;
+
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
+public class CreateMaintenanceRequest {
+    private String vehicleId;
+    private LocalDate serviceDate;
+    private String serviceType;
+    private String description;
+    private String serviceProvider;
+    private BigDecimal cost;
+    private LocalDate nextServiceDue;
+    private Integer odometerReading;
+}

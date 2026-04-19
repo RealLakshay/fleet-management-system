@@ -191,7 +191,7 @@ function renderVehicles(items) {
   if (!items.length) {
     vehiclesListEl.innerHTML = `
       <div class="item empty-state">
-        <div class="empty-icon">ðŸšš</div>
+        <div class="empty-icon" aria-hidden="true">V</div>
         <h3>No vehicles yet</h3>
         <p>Add a vehicle to start tracking your fleet.</p>
       </div>
@@ -202,7 +202,7 @@ function renderVehicles(items) {
   vehiclesListEl.innerHTML = items
     .map((item) => `
       <div class="item" data-vehicle-id="${item.vehicleId}">
-        <button class="btn btn-small btn-danger icon-btn card-delete" title="Delete vehicle" aria-label="Delete vehicle" data-action="delete-vehicle" data-id="${item.vehicleId}">ðŸ—‘</button>
+        <button class="btn btn-small btn-danger icon-btn card-delete" title="Delete vehicle" aria-label="Delete vehicle" data-action="delete-vehicle" data-id="${item.vehicleId}">X</button>
         <b>${item.registrationNumber}</b>
         <dl class="data-grid">
           <dt>ID</dt><dd>${item.vehicleId}</dd>
@@ -219,7 +219,7 @@ function renderTrips(items) {
   if (!items.length) {
     tripsListEl.innerHTML = `
       <div class="item empty-state">
-        <div class="empty-icon">ðŸ—ºï¸</div>
+        <div class="empty-icon" aria-hidden="true">T</div>
         <h3>No trips yet</h3>
         <p>Start a trip to see live movement and status.</p>
       </div>
@@ -236,7 +236,7 @@ function renderTrips(items) {
             <span class="trip-id">Trip #${item.tripId}</span>
             <span class="status-pill ${isOpen ? 'status-open' : 'status-completed'}">${isOpen ? 'OPEN' : 'DONE'}</span>
           </div>
-          <button class="btn btn-small btn-danger icon-btn card-delete" title="Delete trip" aria-label="Delete trip" data-action="delete-trip" data-id="${item.tripId}">ðŸ—‘</button>
+          <button class="btn btn-small btn-danger icon-btn card-delete" title="Delete trip" aria-label="Delete trip" data-action="delete-trip" data-id="${item.tripId}">X</button>
           <dl class="data-grid">
             <dt>Vehicle</dt><dd>${item.vehicleId}</dd>
             <dt>Driver</dt><dd>${item.driverId}</dd>
@@ -258,7 +258,7 @@ function renderDrivers(items) {
   if (!items.length) {
     driversListEl.innerHTML = `
       <div class="item empty-state">
-        <div class="empty-icon">ðŸ‘¤</div>
+        <div class="empty-icon" aria-hidden="true">D</div>
         <h3>No known drivers</h3>
         <p>Create a driver to populate assignment and trip dropdowns.</p>
       </div>
@@ -269,7 +269,7 @@ function renderDrivers(items) {
   driversListEl.innerHTML = items
     .map((d) => `
       <div class="item driver-item" data-driver-id="${d.driverId}">
-        <button class="btn btn-small btn-danger icon-btn card-delete" title="Remove cached driver" aria-label="Remove cached driver" data-action="remove-driver" data-id="${d.driverId}">ðŸ—‘</button>
+        <button class="btn btn-small btn-danger icon-btn card-delete" title="Remove cached driver" aria-label="Remove cached driver" data-action="remove-driver" data-id="${d.driverId}">X</button>
         <div class="driver-copy">
           <b>${d.firstName || 'Driver'} ${d.lastName || ''}</b>
           <dl class="data-grid">

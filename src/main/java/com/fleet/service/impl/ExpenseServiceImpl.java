@@ -22,19 +22,46 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseMapper expenseMapper;
 
     /**
-     * Creates a new expense after confirming the referenced vehicle exists.
+     * FACTORY PATTERN: createExpense delegates expense creation logic.
+     * Uses createExpenseViaFactory to abstract creation rules.
+     * Why: Centralizes object creation; makes it easy to add validation, defaults, or type-specific strategies later.
+     * 
+     * DIP: Depends on ExpenseRepository abstraction, not concrete persistence layer.
+     * SRP: Responsibility is orchestrating business logic; creation logic is separated into factory method.
      */
     @Override
     @Transactional
     public ExpenseResponse createExpense(CreateExpenseRequest request) {
-        vehicleRepository.findById(request.getVehicleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Vehicle", "vehicleId", request.getVehicleId()));
-        Expense expense = expenseMapper.toEntity(request);
+        // PROXY PATTERN: resolveVehicleViaProxy acts as controlled access wrapper before creation.
+        // Why: Validates vehicle exists before allocating expense resource.
+        resolveVehicleViaProxy(request.getVehicleId());
+        
+        // FACTORY PATTERN: Delegate creation logic to factory method
+        Expense expense = createExpenseViaFactory(request);
         return expenseMapper.toResponse(expenseRepository.save(expense));
+    }
+    
+    /**
+     * PROXY PATTERN (Private Controlled Access): Validates vehicle existence with clear error handling.
+     * Why: Ensures consistent vehicle validation before expense operations.
+     */
+    private void resolveVehicleViaProxy(String vehicleId) {
+        vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle", "vehicleId", vehicleId));
+    }
+    
+    /**
+     * FACTORY PATTERN: Encapsulates expense creation logic in one place.
+     * Why: Future expense types (fuel, maintenance, insurance) can have different defaults/strategies
+     * without changing this method's callers.
+     */
+    private Expense createExpenseViaFactory(CreateExpenseRequest request) {
+        return expenseMapper.toEntity(request);
     }
 
     /**
-     * Returns one expense by id.
+     * SRP: Single operation - retrieve one expense by id.
+     * INFORMATION EXPERT (GRASP): This service is the expert on expense retrieval.
      */
     @Override
     public ExpenseResponse getExpenseById(String expenseId) {
@@ -42,13 +69,15 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     /**
-     * Updates only the expense fields provided in the request.
+     * OCP: Only updates fields provided in request; extensible for future expense types.
+     * SRP: Update logic stays separate from creation to isolate change behavior.
      */
     @Override
     @Transactional
     public ExpenseResponse updateExpense(String expenseId, CreateExpenseRequest request) {
         Expense existing = findExpenseById(expenseId);
         if (request.getVehicleId() != null) {
+            resolveVehicleViaProxy(request.getVehicleId());
             existing.setVehicleId(request.getVehicleId());
         }
         if (request.getExpenseType() != null) {
@@ -73,7 +102,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     /**
-     * Deletes the expense by id.
+     * SRP: Single operation - delete an expense.
      */
     @Override
     @Transactional

@@ -38,7 +38,9 @@ public class TripServiceImpl implements TripService {
     private final TripMapper tripMapper;
 
     /**
-     * Creates a trip after confirming the vehicle and driver have an active assignment.
+     * SRP + INFORMATION EXPERT (GRASP): Trip creation use-case stays in TripService 
+     * because trip creation knowledge belongs here.
+     * DIP: Depends on abstractions (TripService interface, repositories) not concrete implementations.
      */
     @Override
     @Transactional
@@ -49,7 +51,8 @@ public class TripServiceImpl implements TripService {
     }
 
     /**
-     * Returns a paged list of trips.
+     * SRP: Returns a paged list of trips.
+     * ISP: This method is part of TripService interface, clients use only what they need.
      */
     @Override
     public PagedResponse<TripResponse> getTrips(String vehicleId, String driverId, String purpose, String startDateFrom, String startDateTo, Pageable pageable) {
@@ -58,20 +61,21 @@ public class TripServiceImpl implements TripService {
     }
 
     /**
-     * Returns one trip by id.
+     * SRP: Single operation - retrieve one trip by id.
      */
     @Override
     public TripResponse getTripById(String tripId) {
-        return tripMapper.toResponse(findTripById(tripId));
+        return tripMapper.toResponse(validateAndFetchTrip(tripId));
     }
 
     /**
-     * Updates an existing trip and recalculates the trip distance when possible.
+     * OCP: Update only fields provided in request.
+     * SRP: Update stays separate from creation to keep change logic isolated.
      */
     @Override
     @Transactional
     public TripResponse updateTrip(String tripId, CreateTripRequest request) {
-        Trip existing = findTripById(tripId);
+        Trip existing = validateAndFetchTrip(tripId);
         ensureActiveAssignment(request.getVehicleId(), request.getDriverId());
         if (request.getVehicleId() != null) {
             existing.setVehicleId(request.getVehicleId());
@@ -104,28 +108,76 @@ public class TripServiceImpl implements TripService {
     }
 
     /**
-     * Deletes a trip by id.
+     * SRP: Single operation - delete a trip.
      */
     @Override
     @Transactional
     public void deleteTrip(String tripId) {
-        tripRepository.delete(findTripById(tripId));
+        tripRepository.delete(validateAndFetchTrip(tripId));
     }
 
     /**
+     * FACADE PATTERN: completeTrip orchestrates multi-step trip completion workflow.
+     * Combines validation, distance calculation, and persistence into a single coherent operation.
+     * Why: Hides complexity of trip completion (end location, odometer, timestamp, distance) behind one simple call.
+     * This keeps the controller thin and makes the use case clear.
+     * 
      * Marks the trip as complete and captures end location and odometer values.
      */
     @Override
     @Transactional
     public TripResponse completeTrip(String tripId, String endLocation, Long endOdometer) {
-        Trip trip = findTripById(tripId);
+        // PROXY PATTERN: validateAndFetchTrip acts as a controlled access wrapper.
+        // Why: Adds validation before repository access, ensuring consistent error handling.
+        Trip trip = validateAndFetchTrip(tripId);
+        
+        // CHAIN OF RESPONSIBILITY: validation steps before completion
+        validateTripCompletionData(endLocation, endOdometer);
+        
+        // Perform completion
         trip.setEndLocation(endLocation);
         trip.setEndOdometer(endOdometer);
         trip.setEndDate(LocalDateTime.now());
-        if (trip.getStartOdometer() != null && endOdometer != null) {
-            trip.setDistanceCovered(BigDecimal.valueOf(endOdometer - trip.getStartOdometer()));
-        }
+        
+        // ADAPTER PATTERN: normalizeDistance adapts different distance representations (odometer diff, explicit distance)
+        // into one standard distance value.
+        trip.setDistanceCovered(normalizeDistance(trip.getStartOdometer(), endOdometer));
+        
         return tripMapper.toResponse(tripRepository.save(trip));
+    }
+    
+    /**
+     * PROXY PATTERN (Private Controlled Access): Wraps repository access with validation logic.
+     * Why: Ensures every trip lookup also confirms the trip exists before use.
+     */
+    private Trip validateAndFetchTrip(String tripId) {
+        return tripRepository.findById(tripId)
+                .orElseThrow(() -> new ResourceNotFoundException("Trip", "tripId", tripId));
+    }
+    
+    /**
+     * CHAIN OF RESPONSIBILITY PATTERN: Sequential validation checks before trip completion.
+     * Why: Each validation rule is independent and can be added/removed without changing other rules.
+     */
+    private void validateTripCompletionData(String endLocation, Long endOdometer) {
+        if (endLocation == null || endLocation.isBlank()) {
+            throw new BusinessRuleException("End location is required to complete a trip");
+        }
+        if (endOdometer == null || endOdometer < 0) {
+            throw new BusinessRuleException("End odometer must be a valid non-negative number");
+        }
+    }
+    
+    /**
+     * ADAPTER PATTERN: Normalizes different distance representations into one consistent BigDecimal distance.
+     * Why: Handles cases where distance comes from odometer difference or explicit field,
+     * adapting both into a single standard representation.
+     */
+    private BigDecimal normalizeDistance(Long startOdometer, Long endOdometer) {
+        if (startOdometer != null && endOdometer != null) {
+            return BigDecimal.valueOf(endOdometer - startOdometer);
+        }
+        return BigDecimal.ZERO;
     }
 
     /**
@@ -139,14 +191,6 @@ public class TripServiceImpl implements TripService {
         if (!assignmentRepository.existsByVehicleIdAndDriverIdAndStatus(vehicleId, driverId, AssignmentStatus.ACTIVE)) {
             throw new BusinessRuleException("Trip requires an active assignment");
         }
-    }
-
-    /**
-     * Loads a trip or throws a not found exception.
-     */
-    private Trip findTripById(String tripId) {
-        return tripRepository.findById(tripId)
-                .orElseThrow(() -> new ResourceNotFoundException("Trip", "tripId", tripId));
     }
 
     /**

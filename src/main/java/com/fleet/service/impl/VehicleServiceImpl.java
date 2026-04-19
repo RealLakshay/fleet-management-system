@@ -50,6 +50,9 @@ public class VehicleServiceImpl implements VehicleService {
     private final ExpenseMapper expenseMapper;
     private final TripMapper tripMapper;
 
+    /**
+     * Creates a new vehicle and defaults its status when none is provided.
+     */
     @Override
     @Transactional
     public VehicleResponse createVehicle(CreateVehicleRequest request) {
@@ -65,6 +68,9 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleMapper.toResponse(vehicleRepository.save(vehicle));
     }
 
+    /**
+     * Returns a filtered list of vehicles with simple in-memory search support.
+     */
     @Override
     public PagedResponse<VehicleResponse> getVehicles(VehicleStatus status, String vehicleType, String search, Pageable pageable) {
         Page<Vehicle> page = vehicleRepository.findAll(pageable);
@@ -85,11 +91,17 @@ public class VehicleServiceImpl implements VehicleService {
                 .build();
     }
 
+    /**
+     * Returns one vehicle by id.
+     */
     @Override
     public VehicleResponse getVehicleById(String vehicleId) {
         return vehicleMapper.toResponse(findVehicleById(vehicleId));
     }
 
+    /**
+     * Updates an existing vehicle while preventing duplicate registration numbers.
+     */
     @Override
     @Transactional
     public VehicleResponse updateVehicle(String vehicleId, UpdateVehicleRequest request) {
@@ -105,6 +117,9 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleMapper.toResponse(vehicleRepository.save(existing));
     }
 
+    /**
+     * Deletes a vehicle unless it still has active assignments.
+     */
     @Override
     @Transactional
     public void deleteVehicle(String vehicleId) {
@@ -115,39 +130,60 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleRepository.delete(vehicle);
     }
 
+    /**
+     * Returns assignments linked to the selected vehicle.
+     */
     @Override
     public PagedResponse<AssignmentResponse> getVehicleAssignments(String vehicleId, Pageable pageable) {
         findVehicleById(vehicleId);
         return toPagedResponse(assignmentRepository.findByVehicleId(vehicleId, pageable), assignmentMapper::toResponse);
     }
 
+    /**
+     * Returns maintenance records linked to the selected vehicle.
+     */
     @Override
     public PagedResponse<MaintenanceResponse> getVehicleMaintenance(String vehicleId, Pageable pageable) {
         findVehicleById(vehicleId);
         return toPagedResponse(maintenanceRepository.findByVehicleId(vehicleId, pageable), maintenanceMapper::toResponse);
     }
 
+    /**
+     * Returns expenses linked to the selected vehicle.
+     */
     @Override
     public PagedResponse<ExpenseResponse> getVehicleExpenses(String vehicleId, Pageable pageable) {
         findVehicleById(vehicleId);
         return toPagedResponse(expenseRepository.findByVehicleId(vehicleId, pageable), expenseMapper::toResponse);
     }
 
+    /**
+     * Returns trips linked to the selected vehicle.
+     */
     @Override
     public PagedResponse<TripResponse> getVehicleTrips(String vehicleId, Pageable pageable) {
         findVehicleById(vehicleId);
         return toPagedResponse(tripRepository.findByVehicleId(vehicleId, pageable), tripMapper::toResponse);
     }
 
+    /**
+     * Loads a vehicle or throws a not found exception.
+     */
     private Vehicle findVehicleById(String vehicleId) {
         return vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle", "vehicleId", vehicleId));
     }
 
+    /**
+     * Performs a case-insensitive contains check while guarding against null values.
+     */
     private boolean containsIgnoreCase(String value, String search) {
         return value != null && value.toLowerCase().contains(search.toLowerCase());
     }
 
+    /**
+     * Converts a Spring Data page into the shared paged response structure.
+     */
     private <T, R> PagedResponse<R> toPagedResponse(Page<T> page, Function<T, R> mapper) {
         return PagedResponse.<R>builder()
                 .content(page.getContent().stream().map(mapper).toList())

@@ -1,3 +1,4 @@
+/* File purpose: Contains supporting implementation for the Fleet Management application. */
 :root {
   --bg: #f4efe5;
   --panel: rgba(255, 255, 255, 0.78);
@@ -48,6 +49,85 @@ body {
 .shell {
   width: min(1120px, 94vw);
   margin: 0 auto;
+}
+
+.start-here {
+  display: grid;
+  gap: 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(246, 255, 249, 0.88)),
+    var(--panel);
+}
+
+.start-copy {
+  max-width: 58rem;
+}
+
+.start-copy .eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent-2);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.start-copy h2 {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.start-copy p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  max-width: 70ch;
+}
+
+.start-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.start-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  box-shadow: 0 8px 22px rgba(20, 30, 35, 0.06);
+}
+
+.start-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(27, 42, 47, 0.18);
+  box-shadow: 0 12px 24px rgba(20, 30, 35, 0.1);
+}
+
+.start-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(59, 122, 87, 0.14), rgba(214, 90, 49, 0.12));
+  font-size: 1.1rem;
+}
+
+.start-card strong {
+  font-size: 1rem;
+}
+
+.start-card small {
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .hero {
@@ -111,6 +191,15 @@ body {
   padding-bottom: 10px;
   border-bottom: 1px solid var(--line);
   font-size: 1.05rem;
+}
+
+.section-driver,
+.section-vehicle,
+.section-assignment,
+.section-trip,
+.panel .list,
+.panel .log {
+  scroll-margin-top: 18px;
 }
 
 .panel-wide {
@@ -593,6 +682,10 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .start-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .dashboard-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -607,6 +700,10 @@ textarea {
 }
 
 @media (max-width: 768px) {
+  .start-grid {
+    grid-template-columns: 1fr;
+  }
+
   .field-row-2,
   .field-row-3 {
     grid-template-columns: 1fr;
@@ -620,3 +717,4 @@ textarea {
     flex-wrap: wrap;
   }
 }
+

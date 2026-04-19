@@ -20,6 +20,9 @@ import java.util.List;
 public class ReportController {
     private final ReportService reportService;
 
+    /**
+     * Returns usage statistics for a vehicle, optionally grouped by day, month, or year.
+     */
     @GetMapping("/vehicle-usage")
     public ResponseEntity<ApiResponse<List<ReportResponse>>> vehicleUsage(
             @RequestParam String vehicleId,

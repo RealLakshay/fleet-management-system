@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.mapper;
 
 // Pure Fabrication: mapping logic stays out of services and entities to keep the model cleaner.

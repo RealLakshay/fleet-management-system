@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.service.impl;
 
 import com.fleet.dto.request.CreateDriverRequest;
@@ -122,3 +125,4 @@ class DriverServiceImplTest {
         verify(driverRepository).delete(existing);
     }
 }
+

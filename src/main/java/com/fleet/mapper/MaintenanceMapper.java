@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.mapper;
 
 // Pure Fabrication: maintenance request/response conversion is centralized here.

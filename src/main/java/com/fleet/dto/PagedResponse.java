@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.dto;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +21,7 @@ public class PagedResponse<T> {
     private long totalElements;
     private int totalPages;
 }
+
 
 
 

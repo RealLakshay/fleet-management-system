@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.mapper;
 
 // Pure Fabrication: DTO mapping is isolated here so entities and services stay focused on domain rules.

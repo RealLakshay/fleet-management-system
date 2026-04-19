@@ -37,6 +37,9 @@ public class TripServiceImpl implements TripService {
     private final DriverRepository driverRepository;
     private final TripMapper tripMapper;
 
+    /**
+     * Creates a trip after confirming the vehicle and driver have an active assignment.
+     */
     @Override
     @Transactional
     public TripResponse createTrip(CreateTripRequest request) {
@@ -45,17 +48,26 @@ public class TripServiceImpl implements TripService {
         return tripMapper.toResponse(tripRepository.save(trip));
     }
 
+    /**
+     * Returns a paged list of trips.
+     */
     @Override
     public PagedResponse<TripResponse> getTrips(String vehicleId, String driverId, String purpose, String startDateFrom, String startDateTo, Pageable pageable) {
         Page<Trip> page = tripRepository.findAll(pageable);
         return toPagedResponse(page, tripMapper::toResponse);
     }
 
+    /**
+     * Returns one trip by id.
+     */
     @Override
     public TripResponse getTripById(String tripId) {
         return tripMapper.toResponse(findTripById(tripId));
     }
 
+    /**
+     * Updates an existing trip and recalculates the trip distance when possible.
+     */
     @Override
     @Transactional
     public TripResponse updateTrip(String tripId, CreateTripRequest request) {
@@ -91,12 +103,18 @@ public class TripServiceImpl implements TripService {
         return tripMapper.toResponse(tripRepository.save(existing));
     }
 
+    /**
+     * Deletes a trip by id.
+     */
     @Override
     @Transactional
     public void deleteTrip(String tripId) {
         tripRepository.delete(findTripById(tripId));
     }
 
+    /**
+     * Marks the trip as complete and captures end location and odometer values.
+     */
     @Override
     @Transactional
     public TripResponse completeTrip(String tripId, String endLocation, Long endOdometer) {
@@ -110,6 +128,9 @@ public class TripServiceImpl implements TripService {
         return tripMapper.toResponse(tripRepository.save(trip));
     }
 
+    /**
+     * Ensures the trip references an existing vehicle and driver with an active assignment.
+     */
     private void ensureActiveAssignment(String vehicleId, String driverId) {
         vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle", "vehicleId", vehicleId));
@@ -120,11 +141,17 @@ public class TripServiceImpl implements TripService {
         }
     }
 
+    /**
+     * Loads a trip or throws a not found exception.
+     */
     private Trip findTripById(String tripId) {
         return tripRepository.findById(tripId)
                 .orElseThrow(() -> new ResourceNotFoundException("Trip", "tripId", tripId));
     }
 
+    /**
+     * Converts a Spring Data page into the shared paged response structure.
+     */
     private <T, R> PagedResponse<R> toPagedResponse(Page<T> page, Function<T, R> mapper) {
         return PagedResponse.<R>builder()
                 .content(page.getContent().stream().map(mapper).toList())

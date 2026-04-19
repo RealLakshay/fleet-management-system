@@ -27,11 +27,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class TripController {
     private final TripService tripService;
 
+    /**
+     * Creates a new trip.
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<TripResponse>> createTrip(@RequestBody CreateTripRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<TripResponse>builder().success(true).data(tripService.createTrip(request)).build());
     }
 
+    /**
+     * Returns a paged list of trips.
+     */
     @GetMapping
     public ResponseEntity<ApiResponse<PagedResponse<TripResponse>>> getTrips(
             @RequestParam(required = false) String vehicleId,
@@ -43,21 +49,33 @@ public class TripController {
         return ResponseEntity.ok(ApiResponse.<PagedResponse<TripResponse>>builder().success(true).data(tripService.getTrips(vehicleId, driverId, purpose, startDateFrom, startDateTo, pageable)).build());
     }
 
+    /**
+     * Returns one trip by id.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<TripResponse>> getTripById(@PathVariable("id") String tripId) {
         return ResponseEntity.ok(ApiResponse.<TripResponse>builder().success(true).data(tripService.getTripById(tripId)).build());
     }
 
+    /**
+     * Updates the trip identified by the supplied id.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<TripResponse>> updateTrip(@PathVariable("id") String tripId, @RequestBody CreateTripRequest request) {
         return ResponseEntity.ok(ApiResponse.<TripResponse>builder().success(true).data(tripService.updateTrip(tripId, request)).build());
     }
 
+    /**
+     * Marks the trip as complete.
+     */
     @PostMapping("/{id}/complete")
     public ResponseEntity<ApiResponse<TripResponse>> completeTrip(@PathVariable("id") String tripId, @RequestBody CompleteTripRequest request) {
         return ResponseEntity.ok(ApiResponse.<TripResponse>builder().success(true).data(tripService.completeTrip(tripId, request.getEndLocation(), request.getEndOdometer())).build());
     }
 
+    /**
+     * Deletes the trip identified by the supplied id.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteTrip(@PathVariable("id") String tripId) {
         tripService.deleteTrip(tripId);

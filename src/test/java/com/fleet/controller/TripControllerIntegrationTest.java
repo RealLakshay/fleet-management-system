@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.controller;
 
 import com.fleet.dto.PagedResponse;
@@ -150,3 +153,4 @@ class TripControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.tripId").value("t1"));
     }
 }
+

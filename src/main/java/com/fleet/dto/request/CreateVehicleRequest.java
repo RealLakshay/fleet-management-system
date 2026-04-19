@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.dto.request;
 
 import com.fleet.model.enums.VehicleStatus;
@@ -17,6 +20,7 @@ public class CreateVehicleRequest {
     private String ownershipDetails;
     private Integer currentOdometer;
 }
+
 
 
 

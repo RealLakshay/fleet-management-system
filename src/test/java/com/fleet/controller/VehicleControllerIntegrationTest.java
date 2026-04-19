@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.controller;
 
 import com.fleet.dto.PagedResponse;
@@ -125,3 +128,4 @@ class VehicleControllerIntegrationTest {
                 .andExpect(jsonPath("$.success").value(true));
     }
 }
+

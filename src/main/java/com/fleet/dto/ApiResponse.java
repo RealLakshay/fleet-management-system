@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.dto;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +17,7 @@ public class ApiResponse<T> {
     private String message;
     private T data;
 }
+
 
 
 

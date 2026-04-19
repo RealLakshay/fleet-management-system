@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.service.impl;
 
 import com.fleet.dto.request.CreateTripRequest;
@@ -146,3 +149,4 @@ class TripServiceImplTest {
         verify(tripRepository).delete(existing);
     }
 }
+

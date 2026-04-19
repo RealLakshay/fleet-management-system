@@ -23,21 +23,33 @@ import org.springframework.web.bind.annotation.RestController;
 public class MaintenanceController {
     private final MaintenanceService maintenanceService;
 
+    /**
+     * Creates a new maintenance record and moves the vehicle into maintenance state.
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<MaintenanceResponse>> createMaintenance(@RequestBody CreateMaintenanceRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<MaintenanceResponse>builder().success(true).data(maintenanceService.createMaintenance(request)).build());
     }
 
+    /**
+     * Returns a maintenance record by id.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<MaintenanceResponse>> getMaintenanceById(@PathVariable("id") String maintenanceId) {
         return ResponseEntity.ok(ApiResponse.<MaintenanceResponse>builder().success(true).data(maintenanceService.getMaintenanceById(maintenanceId)).build());
     }
 
+    /**
+     * Updates the maintenance record identified by the supplied id.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<MaintenanceResponse>> updateMaintenance(@PathVariable("id") String maintenanceId, @RequestBody CreateMaintenanceRequest request) {
         return ResponseEntity.ok(ApiResponse.<MaintenanceResponse>builder().success(true).data(maintenanceService.updateMaintenance(maintenanceId, request)).build());
     }
 
+    /**
+     * Deletes the maintenance record identified by the supplied id.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteMaintenance(@PathVariable("id") String maintenanceId) {
         maintenanceService.deleteMaintenance(maintenanceId);

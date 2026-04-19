@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.mapper;
 
 // Pure Fabrication: vehicle DTO conversion is kept separate from the domain entity and service flow.

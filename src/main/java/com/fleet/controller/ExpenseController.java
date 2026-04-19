@@ -23,21 +23,33 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExpenseController {
     private final ExpenseService expenseService;
 
+    /**
+     * Creates a new expense entry.
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<ExpenseResponse>> createExpense(@RequestBody CreateExpenseRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<ExpenseResponse>builder().success(true).data(expenseService.createExpense(request)).build());
     }
 
+    /**
+     * Returns an expense by id.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ExpenseResponse>> getExpenseById(@PathVariable("id") String expenseId) {
         return ResponseEntity.ok(ApiResponse.<ExpenseResponse>builder().success(true).data(expenseService.getExpenseById(expenseId)).build());
     }
 
+    /**
+     * Updates the expense identified by the supplied id.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ExpenseResponse>> updateExpense(@PathVariable("id") String expenseId, @RequestBody CreateExpenseRequest request) {
         return ResponseEntity.ok(ApiResponse.<ExpenseResponse>builder().success(true).data(expenseService.updateExpense(expenseId, request)).build());
     }
 
+    /**
+     * Deletes the expense identified by the supplied id.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteExpense(@PathVariable("id") String expenseId) {
         expenseService.deleteExpense(expenseId);

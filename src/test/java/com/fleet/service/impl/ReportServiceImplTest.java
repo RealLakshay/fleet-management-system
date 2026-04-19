@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.service.impl;
 
 import com.fleet.dto.response.ReportResponse;
@@ -64,3 +67,4 @@ class ReportServiceImplTest {
         assertThrows(ResourceNotFoundException.class, () -> reportService.getVehicleUsage("missing", null, null, "DAY"));
     }
 }
+

@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.service.impl;
 
 import com.fleet.dto.request.CreateExpenseRequest;
@@ -115,3 +118,4 @@ class ExpenseServiceImplTest {
         verify(expenseRepository).delete(existing);
     }
 }
+

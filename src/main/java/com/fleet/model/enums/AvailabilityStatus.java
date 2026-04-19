@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.model.enums;
 
 public enum AvailabilityStatus {
@@ -5,6 +8,7 @@ public enum AvailabilityStatus {
     ON_TRIP,
     UNAVAILABLE
 }
+
 
 
 

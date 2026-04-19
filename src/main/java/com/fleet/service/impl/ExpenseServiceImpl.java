@@ -21,6 +21,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final VehicleRepository vehicleRepository;
     private final ExpenseMapper expenseMapper;
 
+    /**
+     * Creates a new expense after confirming the referenced vehicle exists.
+     */
     @Override
     @Transactional
     public ExpenseResponse createExpense(CreateExpenseRequest request) {
@@ -30,11 +33,17 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseMapper.toResponse(expenseRepository.save(expense));
     }
 
+    /**
+     * Returns one expense by id.
+     */
     @Override
     public ExpenseResponse getExpenseById(String expenseId) {
         return expenseMapper.toResponse(findExpenseById(expenseId));
     }
 
+    /**
+     * Updates only the expense fields provided in the request.
+     */
     @Override
     @Transactional
     public ExpenseResponse updateExpense(String expenseId, CreateExpenseRequest request) {
@@ -63,12 +72,18 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseMapper.toResponse(expenseRepository.save(existing));
     }
 
+    /**
+     * Deletes the expense by id.
+     */
     @Override
     @Transactional
     public void deleteExpense(String expenseId) {
         expenseRepository.delete(findExpenseById(expenseId));
     }
 
+    /**
+     * Loads an expense or throws a not found exception.
+     */
     private Expense findExpenseById(String expenseId) {
         return expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense", "expenseId", expenseId));

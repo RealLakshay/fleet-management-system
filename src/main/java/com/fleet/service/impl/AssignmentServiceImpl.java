@@ -28,6 +28,9 @@ public class AssignmentServiceImpl implements AssignmentService {
     private final DriverRepository driverRepository;
     private final AssignmentMapper assignmentMapper;
 
+    /**
+     * Creates an assignment after verifying the vehicle is operational and the driver is available.
+     */
     @Override
     @Transactional
     public AssignmentResponse createAssignment(CreateAssignmentRequest request) {
@@ -55,11 +58,17 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentMapper.toResponse(saved);
     }
 
+    /**
+     * Returns one assignment by id.
+     */
     @Override
     public AssignmentResponse getAssignmentById(String assignmentId) {
         return assignmentMapper.toResponse(findAssignmentById(assignmentId));
     }
 
+    /**
+     * Updates assignment fields that are present in the request.
+     */
     @Override
     @Transactional
     public AssignmentResponse updateAssignment(String assignmentId, CreateAssignmentRequest request) {
@@ -88,6 +97,9 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentMapper.toResponse(assignmentRepository.save(existing));
     }
 
+    /**
+     * Deletes the assignment by id.
+     */
     @Override
     @Transactional
     public void deleteAssignment(String assignmentId) {
@@ -95,6 +107,9 @@ public class AssignmentServiceImpl implements AssignmentService {
         assignmentRepository.delete(existing);
     }
 
+    /**
+     * Loads an assignment or throws a not found exception.
+     */
     private Assignment findAssignmentById(String assignmentId) {
         return assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Assignment", "assignmentId", assignmentId));

@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.dto.response;
 
 import com.fleet.model.enums.VehicleStatus;

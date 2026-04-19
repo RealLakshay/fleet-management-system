@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.model;
 
 import com.fleet.model.enums.VehicleStatus;
@@ -27,6 +30,7 @@ public class Vehicle {
 
     private String manufacturer;
     private String model;
+    @Column(name = "vehicle_year")
     private Integer year;
     @Enumerated(EnumType.STRING)
     private VehicleStatus status;

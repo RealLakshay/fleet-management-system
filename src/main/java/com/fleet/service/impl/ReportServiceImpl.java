@@ -30,6 +30,9 @@ public class ReportServiceImpl implements ReportService {
     private final VehicleRepository vehicleRepository;
     private final DriverRepository driverRepository;
 
+    /**
+     * Aggregates vehicle trips into period buckets for reporting.
+     */
     @Override
     public List<ReportResponse> getVehicleUsage(String vehicleId, LocalDateTime from, LocalDateTime to, String groupBy) {
         if (!vehicleRepository.existsById(vehicleId)) {
@@ -68,6 +71,9 @@ public class ReportServiceImpl implements ReportService {
                 .toList();
     }
 
+    /**
+     * Builds the grouping key for a trip based on the requested interval.
+     */
     private String bucketKey(Trip trip, String groupBy) {
         if (!StringUtils.hasText(groupBy) || trip.getStartDate() == null) {
             return "ALL";

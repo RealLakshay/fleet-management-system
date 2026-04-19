@@ -1,10 +1,11 @@
+-- File purpose: Contains supporting implementation for the Fleet Management application.
 CREATE TABLE vehicles (
     vehicle_id VARCHAR(36) PRIMARY KEY,
     registration_number VARCHAR(100) UNIQUE NOT NULL,
     vehicle_type VARCHAR(100),
     manufacturer VARCHAR(150),
     model VARCHAR(150),
-    year INT,
+    vehicle_year INT,
     status VARCHAR(30),
     purchase_date DATE,
     ownership_details TEXT,
@@ -100,3 +101,4 @@ CREATE INDEX idx_assignments_status ON assignments(status);
 CREATE INDEX idx_expenses_vehicle_id ON expenses(vehicle_id);
 CREATE INDEX idx_trips_vehicle_id ON trips(vehicle_id);
 CREATE INDEX idx_trips_driver_id ON trips(driver_id);
+

@@ -32,11 +32,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class VehicleController {
     private final VehicleService vehicleService;
 
+    /**
+     * Creates a new vehicle and returns the saved resource.
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<VehicleResponse>> createVehicle(@RequestBody CreateVehicleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<VehicleResponse>builder().success(true).data(vehicleService.createVehicle(request)).build());
     }
 
+    /**
+     * Returns a filtered, paged list of vehicles.
+     */
     @GetMapping
     public ResponseEntity<ApiResponse<PagedResponse<VehicleResponse>>> getVehicles(
             @RequestParam(required = false) VehicleStatus status,
@@ -46,37 +52,58 @@ public class VehicleController {
         return ResponseEntity.ok(ApiResponse.<PagedResponse<VehicleResponse>>builder().success(true).data(vehicleService.getVehicles(status, vehicleType, search, pageable)).build());
     }
 
+    /**
+     * Returns a vehicle by its identifier.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<VehicleResponse>> getVehicleById(@PathVariable("id") String vehicleId) {
         return ResponseEntity.ok(ApiResponse.<VehicleResponse>builder().success(true).data(vehicleService.getVehicleById(vehicleId)).build());
     }
 
+    /**
+     * Updates the vehicle identified by the supplied id.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<VehicleResponse>> updateVehicle(@PathVariable("id") String vehicleId, @RequestBody UpdateVehicleRequest request) {
         return ResponseEntity.ok(ApiResponse.<VehicleResponse>builder().success(true).data(vehicleService.updateVehicle(vehicleId, request)).build());
     }
 
+    /**
+     * Deletes the vehicle identified by the supplied id.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteVehicle(@PathVariable("id") String vehicleId) {
         vehicleService.deleteVehicle(vehicleId);
         return ResponseEntity.ok(ApiResponse.<Void>builder().success(true).build());
     }
 
+    /**
+     * Returns paged assignments for the selected vehicle.
+     */
     @GetMapping("/{id}/assignments")
     public ResponseEntity<ApiResponse<PagedResponse<AssignmentResponse>>> getVehicleAssignments(@PathVariable("id") String vehicleId, Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.<PagedResponse<AssignmentResponse>>builder().success(true).data(vehicleService.getVehicleAssignments(vehicleId, pageable)).build());
     }
 
+    /**
+     * Returns paged maintenance records for the selected vehicle.
+     */
     @GetMapping("/{id}/maintenance")
     public ResponseEntity<ApiResponse<PagedResponse<MaintenanceResponse>>> getVehicleMaintenance(@PathVariable("id") String vehicleId, Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.<PagedResponse<MaintenanceResponse>>builder().success(true).data(vehicleService.getVehicleMaintenance(vehicleId, pageable)).build());
     }
 
+    /**
+     * Returns paged expenses for the selected vehicle.
+     */
     @GetMapping("/{id}/expenses")
     public ResponseEntity<ApiResponse<PagedResponse<ExpenseResponse>>> getVehicleExpenses(@PathVariable("id") String vehicleId, Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.<PagedResponse<ExpenseResponse>>builder().success(true).data(vehicleService.getVehicleExpenses(vehicleId, pageable)).build());
     }
 
+    /**
+     * Returns paged trips for the selected vehicle.
+     */
     @GetMapping("/{id}/trips")
     public ResponseEntity<ApiResponse<PagedResponse<TripResponse>>> getVehicleTrips(@PathVariable("id") String vehicleId, Pageable pageable) {
         return ResponseEntity.ok(ApiResponse.<PagedResponse<TripResponse>>builder().success(true).data(vehicleService.getVehicleTrips(vehicleId, pageable)).build());

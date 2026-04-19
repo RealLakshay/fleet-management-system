@@ -1,3 +1,6 @@
+/**
+ * File purpose: Contains supporting implementation for the Fleet Management application.
+ */
 package com.fleet.mapper;
 
 // Pure Fabrication: trip mapping stays isolated so trip logic does not mix with transport DTOs.

@@ -23,6 +23,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     private final VehicleRepository vehicleRepository;
     private final MaintenanceMapper maintenanceMapper;
 
+    /**
+     * Creates a maintenance record and marks the linked vehicle as under maintenance.
+     */
     @Override
     @Transactional
     public MaintenanceResponse createMaintenance(CreateMaintenanceRequest request) {
@@ -34,11 +37,17 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         return maintenanceMapper.toResponse(maintenanceRepository.save(record));
     }
 
+    /**
+     * Returns one maintenance record by id.
+     */
     @Override
     public MaintenanceResponse getMaintenanceById(String maintenanceId) {
         return maintenanceMapper.toResponse(findMaintenanceById(maintenanceId));
     }
 
+    /**
+     * Updates only the maintenance fields provided in the request.
+     */
     @Override
     @Transactional
     public MaintenanceResponse updateMaintenance(String maintenanceId, CreateMaintenanceRequest request) {
@@ -70,12 +79,18 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         return maintenanceMapper.toResponse(maintenanceRepository.save(existing));
     }
 
+    /**
+     * Deletes the maintenance record by id.
+     */
     @Override
     @Transactional
     public void deleteMaintenance(String maintenanceId) {
         maintenanceRepository.delete(findMaintenanceById(maintenanceId));
     }
 
+    /**
+     * Loads a maintenance record or throws a not found exception.
+     */
     private MaintenanceRecord findMaintenanceById(String maintenanceId) {
         return maintenanceRepository.findById(maintenanceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Maintenance", "maintenanceId", maintenanceId));

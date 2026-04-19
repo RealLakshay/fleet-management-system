@@ -23,21 +23,33 @@ import org.springframework.web.bind.annotation.RestController;
 public class AssignmentController {
     private final AssignmentService assignmentService;
 
+    /**
+     * Creates a new assignment and returns the saved assignment payload.
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<AssignmentResponse>> createAssignment(@RequestBody CreateAssignmentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.<AssignmentResponse>builder().success(true).data(assignmentService.createAssignment(request)).build());
     }
 
+    /**
+     * Returns a single assignment by its identifier.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AssignmentResponse>> getAssignmentById(@PathVariable("id") String assignmentId) {
         return ResponseEntity.ok(ApiResponse.<AssignmentResponse>builder().success(true).data(assignmentService.getAssignmentById(assignmentId)).build());
     }
 
+    /**
+     * Updates the assignment identified by the supplied id.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AssignmentResponse>> updateAssignment(@PathVariable("id") String assignmentId, @RequestBody CreateAssignmentRequest request) {
         return ResponseEntity.ok(ApiResponse.<AssignmentResponse>builder().success(true).data(assignmentService.updateAssignment(assignmentId, request)).build());
     }
 
+    /**
+     * Deletes the assignment identified by the supplied id.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteAssignment(@PathVariable("id") String assignmentId) {
         assignmentService.deleteAssignment(assignmentId);

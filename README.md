@@ -27,6 +27,8 @@ This project is a full-stack Fleet Management System built with Spring Boot 4 (J
 2. **Access the App:**
      - Open [http://localhost:8080](http://localhost:8080) in your browser
 
+By default the application starts with an in-memory H2 database so `bootRun` works without a local PostgreSQL server. To use PostgreSQL instead, set `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, and `SPRING_DATASOURCE_PASSWORD` before starting the app.
+
 ## Project Structure
 - `src/main/java/com/fleet/` — Backend source code
 - `src/main/resources/static/` — Frontend (SPA)

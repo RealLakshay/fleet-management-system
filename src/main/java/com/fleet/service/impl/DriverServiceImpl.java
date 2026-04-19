@@ -36,6 +36,9 @@ public class DriverServiceImpl implements DriverService {
     private final AssignmentMapper assignmentMapper;
     private final TripMapper tripMapper;
 
+    /**
+     * Creates a driver if the license number and email are both unique.
+     */
     @Override
     @Transactional
     public DriverResponse createDriver(CreateDriverRequest request) {
@@ -47,11 +50,17 @@ public class DriverServiceImpl implements DriverService {
         return driverMapper.toResponse(driverRepository.save(driver));
     }
 
+    /**
+     * Returns one driver by id.
+     */
     @Override
     public DriverResponse getDriverById(String driverId) {
         return driverMapper.toResponse(findDriverById(driverId));
     }
 
+    /**
+     * Updates an existing driver.
+     */
     @Override
     @Transactional
     public DriverResponse updateDriver(String driverId, UpdateDriverRequest request) {
@@ -60,6 +69,9 @@ public class DriverServiceImpl implements DriverService {
         return driverMapper.toResponse(driverRepository.save(existing));
     }
 
+    /**
+     * Deletes a driver unless the driver still has an active assignment.
+     */
     @Override
     @Transactional
     public void deleteDriver(String driverId) {
@@ -70,23 +82,35 @@ public class DriverServiceImpl implements DriverService {
         driverRepository.delete(driver);
     }
 
+    /**
+     * Returns the driver's assignments as a paged response.
+     */
     @Override
     public Object getDriverAssignments(String driverId, Pageable pageable) {
         findDriverById(driverId);
         return toPagedResponse(assignmentRepository.findByDriverId(driverId, pageable), assignmentMapper::toResponse);
     }
 
+    /**
+     * Returns the driver's trips as a paged response.
+     */
     @Override
     public Object getDriverTrips(String driverId, Pageable pageable) {
         findDriverById(driverId);
         return toPagedResponse(tripRepository.findByDriverId(driverId, pageable), tripMapper::toResponse);
     }
 
+    /**
+     * Loads a driver or throws a not found exception.
+     */
     private Driver findDriverById(String driverId) {
         return driverRepository.findById(driverId)
                 .orElseThrow(() -> new ResourceNotFoundException("Driver", "driverId", driverId));
     }
 
+    /**
+     * Converts a Spring Data page into the shared paged response structure.
+     */
     private <T, R> com.fleet.dto.PagedResponse<R> toPagedResponse(Page<T> page, Function<T, R> mapper) {
         return com.fleet.dto.PagedResponse.<R>builder()
                 .content(page.getContent().stream().map(mapper).toList())
